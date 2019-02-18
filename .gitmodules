@@ -10,3 +10,6 @@
 [submodule "test/atsy/atsy"]
 	path = test/atsy/atsy
 	url = https://github.com/bpowers/atsy
+[submodule "src/vendor/johnterickson/mman-win32"]
+	path = src/vendor/johnterickson/mman-win32
+	url = https://github.com/johnterickson/mman-win32.git

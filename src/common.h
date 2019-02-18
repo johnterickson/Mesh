@@ -12,8 +12,13 @@
 
 #include <fcntl.h>
 
-#if !defined(_WIN32)
+#if defined(_MSC_VER)
+#else
+#if defined(_WIN32)
+#include "vendor/johnterickson/mman-win32/mman.h"
+#else
 #include <sys/mman.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -33,7 +38,7 @@
 // from Heap Layers
 #include "utility/ilog2.h"
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #define CANONICAL_NAME "mesh"
 #define MESHING_ENABLED 1
 #define PACKAGE_BUGREPORT "bpowers@cs.umass.edu"
@@ -48,9 +53,12 @@
 namespace mesh {
 static constexpr bool kMeshingEnabled = MESHING_ENABLED == 1;
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 // FIXME(EDB)
 static constexpr int kMapShared = 1;
+#elif defined(_WIN32)
+// TOOD: MAP_NORESERVE
+static constexpr int kMapShared = kMeshingEnabled ? MAP_SHARED : MAP_PRIVATE | MAP_ANONYMOUS;
 #else
 static constexpr int kMapShared = kMeshingEnabled ? MAP_SHARED : MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE;
 #endif
@@ -129,7 +137,7 @@ inline constexpr size_t ByteSizeForClass(const int i) {
 }
 
 inline 
-#if !defined(_WIN32)
+#if !defined(_MSC_VER)
 constexpr 
 #endif
 int ClassForByteSize(const size_t sz) {
@@ -148,7 +156,7 @@ using std::mutex;
 // using std::shared_mutex;
 using std::unique_lock;
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #define ATTRIBUTE_NEVER_INLINE __declspec(noinline)
 #define ATTRIBUTE_ALWAYS_INLINE __forceinline
 #define ATTRIBUTE_ALIGNED(s) __declspec(align(s))

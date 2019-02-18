@@ -7,7 +7,7 @@ from sys import stdout, stderr, argv
 from subprocess import Popen, PIPE
 from os import environ, getcwd
 from datetime import datetime
-from os.path import dirname, samefile, join
+from os.path import dirname, realpath, join
 from shutil import copyfile
 
 LOCAL_PKGCONFIG = '/usr/local/lib/pkgconfig'
@@ -175,7 +175,7 @@ class ConfigBuilder:
             config.write('\n#endif // MESH__CONFIG_H\n')
 
         src_dir = dirname(argv[0])
-        if not samefile(src_dir, getcwd()):
+        if realpath(src_dir) != realpath(getcwd()):
             copyfile(join(src_dir, 'Makefile'), 'Makefile')
 
     def append(self, var, val, sep=' '):

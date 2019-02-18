@@ -7,14 +7,18 @@
 #ifndef MESH__ONE_WAY_MMAP_HEAP_H
 #define MESH__ONE_WAY_MMAP_HEAP_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #error "TODO"
 #include <windows.h>
 #else
 // UNIX
 #include <fcntl.h>
 #include <stdlib.h>
+#if defined(_WIN32)
+#include "vendor/johnterickson/mman-win32/mman.h"
+#else
 #include <sys/mman.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
