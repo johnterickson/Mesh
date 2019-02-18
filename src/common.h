@@ -33,7 +33,17 @@
 // from Heap Layers
 #include "utility/ilog2.h"
 
+#if defined(_WIN32)
+#define CANONICAL_NAME "mesh"
+#define MESHING_ENABLED 1
+#define PACKAGE_BUGREPORT "bpowers@cs.umass.edu"
+#define SHUFFLE_ON_FREE 0
+#define SHUFFLE_ON_INIT 1
+#define VERSION "0.1.0"
+#define YEAR "2019"
+#else
 #include "config.h"
+#endif
 
 namespace mesh {
 static constexpr bool kMeshingEnabled = MESHING_ENABLED == 1;
@@ -118,7 +128,11 @@ inline constexpr size_t ByteSizeForClass(const int i) {
   return static_cast<size_t>(1ULL << (i + staticlog(kMinObjectSize)));
 }
 
-inline constexpr int ClassForByteSize(const size_t sz) {
+inline 
+#if !defined(_WIN32)
+constexpr 
+#endif
+int ClassForByteSize(const size_t sz) {
   return static_cast<int>(HL::ilog2((sz < 8) ? 8 : sz) - staticlog(kMinObjectSize));
 }
 }  // namespace powerOfTwo
@@ -134,14 +148,24 @@ using std::mutex;
 // using std::shared_mutex;
 using std::unique_lock;
 
-#define likely(x) __builtin_expect(!!(x), 1)
-#define unlikely(x) __builtin_expect(!!(x), 0)
-
-#define ATTRIBUTE_PACKED __attribute__((packed))
+#if defined(_WIN32)
+#define ATTRIBUTE_NEVER_INLINE __declspec(noinline)
+#define ATTRIBUTE_ALWAYS_INLINE __forceinline
+#define ATTRIBUTE_ALIGNED(s) __declspec(align(s))
+#define ATTRIBUTE_NORETURN __declspec(noreturn)
+#define likely(x) (x)
+#define unlikely(x) (x)
+#define __PRETTY_FUNCTION__ __FUNCTION__
+#else
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
 #define ATTRIBUTE_NEVER_INLINE __attribute__((noinline))
 #define ATTRIBUTE_ALWAYS_INLINE __attribute__((always_inline))
-#define ATTRIBUTE_HIDDEN __attribute__((visibility("hidden")))
 #define ATTRIBUTE_ALIGNED(s) __attribute__((aligned(s)))
+#define ATTRIBUTE_NORETURN __attribute__((noreturn))
+#define likely(x) __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+#endif
+
 #define CACHELINE_SIZE 64
 #define CACHELINE_ALIGNED ATTRIBUTE_ALIGNED(CACHELINE_SIZE)
 #define CACHELINE_ALIGNED_FN CACHELINE_ALIGNED
@@ -199,12 +223,17 @@ inline mt19937_64 *initSeed() {
   static_assert(sizeof(mt19937_64::result_type) == sizeof(uint64_t), "expected 64-bit result_type for PRNG");
 
   // seed this Mersenne Twister PRNG with entropy from the host OS
+  unsigned long seed;
+#if defined(_WIN32)
+  // todo
+  seed = 0;
+#else
   int fd = open("/dev/urandom", O_RDONLY);
-  unsigned long buf;
-  auto sz = read(fd, (void *)&buf, sizeof(unsigned long));
+  auto sz = read(fd, (void *)&seed, sizeof(unsigned long));
+#endif
   //  std::random_device rd;
   // return new (mtBuf) std::mt19937_64(rd());
-  return new (mtBuf) std::mt19937_64(buf);
+  return new (mtBuf) std::mt19937_64(seed);
 }
 
 // cryptographically-strong thread-safe PRNG seed
@@ -220,7 +249,7 @@ inline uint64_t seed() {
 }
 
 // assertions that don't attempt to recursively malloc
-void __attribute__((noreturn))
+void ATTRIBUTE_NORETURN
 __mesh_assert_fail(const char *assertion, const char *file, const char *func, int line, const char *fmt, ...);
 }  // namespace internal
 
