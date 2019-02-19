@@ -7,14 +7,14 @@
 #ifndef MESH__MMAP_HEAP_H
 #define MESH__MMAP_HEAP_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #error "TODO"
 #include <windows.h>
 #else
 // UNIX
 #include <fcntl.h>
 #include <stdlib.h>
-#include <sys/mman.h>
+#include "mman.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

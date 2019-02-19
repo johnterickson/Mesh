@@ -7,20 +7,22 @@
 #ifndef MESH__MESHABLE_ARENA_H
 #define MESH__MESHABLE_ARENA_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #error "TODO"
 #include <windows.h>
 #else
 // UNIX
 #include <fcntl.h>
 #include <stdlib.h>
-#include <sys/mman.h>
+#include "mman.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 #endif
 
-#if defined(__APPLE__) || defined(__FreeBSD__)
+#if defined(_WIN32)
+
+#elif defined(__APPLE__) || defined(__FreeBSD__)
 #include <copyfile.h>
 #else
 #include <sys/sendfile.h>

@@ -1,6 +1,3 @@
-[submodule "Heap-Layers"]
-	path = src/vendor/Heap-Layers
-	url = https://github.com/emeryberger/Heap-Layers
 [submodule "src/vendor/gflags"]
 	path = src/vendor/gflags
 	url = https://github.com/gflags/gflags.git
@@ -13,3 +10,6 @@
 [submodule "src/vendor/johnterickson/mman-win32"]
 	path = src/vendor/johnterickson/mman-win32
 	url = https://github.com/johnterickson/mman-win32.git
+[submodule "src/vendor/johnterickson/Heap-Layers"]
+	path = src/vendor/johnterickson/Heap-Layers
+	url = https://github.com/johnterickson/Heap-Layers.git

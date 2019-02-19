@@ -11,18 +11,10 @@
 #include <cstdint>
 
 #include <fcntl.h>
-
-#if defined(_MSC_VER)
-#else
-#if defined(_WIN32)
-#include "vendor/johnterickson/mman-win32/mman.h"
-#else
-#include <sys/mman.h>
-#endif
+#include "mman.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif
 
 #include <chrono>
 #include <condition_variable>

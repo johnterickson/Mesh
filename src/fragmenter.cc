@@ -21,6 +21,10 @@ extern "C" {
 int mesh_mallctl(const char *name, void *oldp, size_t *oldlenp, void *newp, size_t newlen);
 }
 
+#if defined(_WIN32)
+#define lrand48() rand()
+#endif
+
 using std::string;
 
 // use as (voidptr)ptr -- disgusting, but useful to minimize the clutter

@@ -14,11 +14,7 @@
 // UNIX
 #include <fcntl.h>
 #include <stdlib.h>
-#if defined(_WIN32)
-#include "vendor/johnterickson/mman-win32/mman.h"
-#else
-#include <sys/mman.h>
-#endif
+#include "mman.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -66,7 +62,12 @@ public:
   }
 
   inline void *malloc(size_t sz) {
+#if defined(_WIN32)
+    //TODO: MAP_NORESERVE
+    return map(sz, MAP_PRIVATE | MAP_ANONYMOUS, -1);
+#else
     return map(sz, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1);
+#endif
   }
 
   inline size_t getSize(void *ptr) const {

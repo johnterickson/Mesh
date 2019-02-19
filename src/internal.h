@@ -252,7 +252,7 @@ static_assert(FlagEmpty > kBinnedTrackerBinCount, "Full flag too small");
 // internal allocations and indirections.
 class BinToken {
 public:
-  typedef uint8_t Bin;
+  typedef uint32_t Bin;
   typedef uint32_t Size;
 
   BinToken() noexcept : _bin(bintoken::BinMax), _off(bintoken::Max) {
