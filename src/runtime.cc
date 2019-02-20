@@ -8,7 +8,11 @@
 #include <pthread.h>
 #include <sched.h>
 #include <stdlib.h>
+#if defined(_WIN32)
+#warning TODO
+#else
 #include <sys/syscall.h>
+#endif
 #include <sys/types.h>
 
 #ifdef __linux__
@@ -70,7 +74,7 @@ int internal::copyFile(int dstFd, int srcFd, off_t off, size_t sz) {
   off_t newOff = lseek(dstFd, off, SEEK_SET);
   d_assert(newOff == off);
 
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(_WIN32)
+#if defined(__APPLE__) || defined(__FreeBSD__)
 #warning test that setting offset on dstFd works as intended
   // fcopyfile works on FreeBSD and OS X 10.5+
   int result = fcopyfile(srcFd, dstFd, 0, COPYFILE_ALL);

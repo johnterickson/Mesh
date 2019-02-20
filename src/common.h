@@ -42,6 +42,15 @@
 #include "config.h"
 #endif
 
+#if defined(_WIN32)
+#define madvise(addr, length, advice)
+#define sigset_t _sigset_t
+#define siginfo_t EXCEPTION_POINTERS 
+#define pid_t int32_t
+#define gettid() GetCurrentThreadId()
+#define lrand48() rand()
+#endif
+
 namespace mesh {
 static constexpr bool kMeshingEnabled = MESHING_ENABLED == 1;
 
@@ -149,6 +158,8 @@ using std::mutex;
 using std::unique_lock;
 
 #if defined(_MSC_VER)
+#define ATTRIBUTE_PACK_BEGIN __pragma( pack(push, 1) )
+#define ATTRIBUTE_PACK_END __pragma( pack(pop) )
 #define ATTRIBUTE_NEVER_INLINE __declspec(noinline)
 #define ATTRIBUTE_ALWAYS_INLINE __forceinline
 #define ATTRIBUTE_ALIGNED(s) __declspec(align(s))
@@ -157,7 +168,8 @@ using std::unique_lock;
 #define unlikely(x) (x)
 #define __PRETTY_FUNCTION__ __FUNCTION__
 #else
-#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#define ATTRIBUTE_PACK_BEGIN __attribute__((__packed__))
+#define ATTRIBUTE_PACK_END 
 #define ATTRIBUTE_NEVER_INLINE __attribute__((noinline))
 #define ATTRIBUTE_ALWAYS_INLINE __attribute__((always_inline))
 #define ATTRIBUTE_ALIGNED(s) __attribute__((aligned(s)))
@@ -224,7 +236,7 @@ inline mt19937_64 *initSeed() {
 
   // seed this Mersenne Twister PRNG with entropy from the host OS
   unsigned long seed;
-#if defined(_WIN32)
+#if defined(_MSC_VER)
   // todo
   seed = 0;
 #else

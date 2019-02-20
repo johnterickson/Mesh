@@ -34,7 +34,7 @@ GTEST_SRCS       = src/vendor/googletest/googletest/src/gtest-all.cc \
 
 UNIT_SRCS        = $(wildcard src/unit/*.cc) $(GTEST_SRCS) $(COMMON_SRCS)
 UNIT_OBJS        = $(addprefix build/,$(patsubst %.c,%.o,$(UNIT_SRCS:.cc=.o)))
-UNIT_CXXFLAGS    = -isystem src/vendor/googletest/googletest/include -Isrc/vendor/googletest/googletest $(filter-out -Wextra,$(CXXFLAGS:-Wundef=)) -Wno-unused-const-variable -DGTEST_HAS_PTHREAD=1
+UNIT_CXXFLAGS    = -isystem src/vendor/googletest/googletest/include -Isrc/vendor/googletest/googletest $(filter-out -Wextra,$(CXXFLAGS:-Wundef=)) -Wno-unused-const-variable
 UNIT_LDFLAGS     = $(LIBS)
 UNIT_BIN         = unit.test
 
@@ -92,7 +92,7 @@ $(ALL_SUBMODULES):
 	touch -c $@
 
 build/src/vendor/googletest/%.o: src/vendor/googletest/%.cc build $(CONFIG)
-	@echo "  CXX   $@"
+	@echo "  CXX   $@"	
 	$(CXX) $(UNIT_CXXFLAGS) -MMD -o $@ -c $<
 
 build/src/%.o: src/%.S build $(CONFIG)

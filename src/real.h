@@ -27,8 +27,12 @@ DECLARE_REAL(epoll_wait);
 
 DECLARE_REAL(pthread_create);
 
+#if defined(_WIN32)
+//hmm
+#else
 DECLARE_REAL(sigaction);
 DECLARE_REAL(sigprocmask);
+#endif
 }  // namespace real
 }  // namespace mesh
 
